@@ -52,3 +52,33 @@ public:
         return true;
     }
 };
+
+
+/*
+    Dfs solution, using a visited array for memorization, greatly speed up the dfs process
+*/
+class Solution {
+public:
+    bool canFinish(int numCourses, vector<pair<int, int>>& prerequisites) {
+        vector<vector<int>> graph(numCourses);
+        vector<int> visited(numCourses, 0);
+        for (auto &a : prerequisites) { // make graph, convert from edge list to adjacency list
+            graph[a.second].push_back(a.first);
+        }
+        for (int i = 0; i < numCourses; ++i) {
+            if (!canFinishDfs(graph, visited, i)) return false;
+        }
+        return true;
+    }
+    
+    bool canFinishDfs(vector<vector<int>>& graph, vector<int>& visited, int i) {
+        if (visited[i] == -1) return false;
+        if (visited[i] == 1) return true; // it's a visited vertex but it lead to no circle
+        visited[i] = -1; // mark it visited
+        for (auto &a : graph[i]) { // traverse from this vertex to all leading vertices
+            if (!canFinishDfs(graph, visited, a)) return false;
+        }
+        visited[i] = 1; // no circle found traverse from this vertex
+        return true;
+    }
+};
